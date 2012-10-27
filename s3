@@ -1,4 +1,4 @@
-getconf src
+getconf src /var/lib/backups/
 getconf bucket
 getconf S3CMD "/usr/bin/s3cmd"
 getconf options "--recursive"
