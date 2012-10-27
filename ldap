@@ -1,8 +1,10 @@
-getconf src /var/lib/svn
-getconf dest /var/backups/svndump
-getconf tmp /var/backups/svndump.tmp
-getconf SVNDUMP "/usr/bin/svnadmin dump -q"
-getconf repos "all"
+getconf src = /var/lib/ldap
+getconf dest = /var/backups/ldap
+getconf conf = /etc/ldap/slapd.conf
+getconf databases = all
+getconf compress = yes
+getconf SLAPCAT = /usr/bin/slapcat
+
 error=0
 now="$(date +"%Y%m%d")"
 
@@ -29,39 +31,39 @@ fi
 
 cd $vroot$src
 
-if [ $repos = all ]; then
-   repos=$(find . -mindepth 1 -maxdepth 1 -type d)
+if [ $databases = all ]; then
+   databases=$(find . -mindepth 1 -maxdepth 1 -type d)
 fi
 
-for repo in $repos
+for db in $databases
 do
-   ret=`mkdir -p $vroot$tmp/$repo 2>&1`
+   ret=`mkdir -p $vroot$tmp/$db 2>&1`
    code=$?
    if [ "$ret" ]; then
       debug "$ret"
    fi
    if [ $code != 0 ]; then
-      error "command failed mkdir -p $vroot$tmp/$repo"
+      error "command failed mkdir -p $vroot$tmp/$db"
    fi
 
    if [ $usevserver = yes ]
    then
-      ret=`$VSERVER $vsname exec $SVNDUMP $src/$repo | bzip2 > $tmp/$repo/$repo-$now.svn.bz2  2>&1`
+      ret=`$VSERVER $vsname exec $SLAPCAT $src/$db | bzip2 > $tmp/$db/$db-$now.ldif.bz2  2>&1`
    else
-      ret=`$SVNDUMP $src/$repo | bzip2 > $tmp/$repo/$repo-$now.svn.bz2 2>&1`
+      ret=`$SLAPCAT $src/$db | bzip2 > $tmp/$db/$db-$now.ldif.bz2 2>&1`
    fi
    code=$?
    if [ "$ret" ]; then
       debug "$ret"
    fi
    if [ $code != 0 ]; then
-      error "command failed -- $SVNDUMP $vroot$src/$repo > $vroot$tmp/$repo/$repo-$now.svn.bz2"
+      error "command failed -- $SVNDUMP $vroot$src/$db > $vroot$tmp/$db/$db-$now.ldif.bz2"
       error=1
    fi
 done
 
 if [ $error -eq 1 ]; then
-   echo "Error: because of earlier errors, we are leaving svn backups in $vroot$tmp instead of $vroot$dest"
+   echo "Error: because of earlier errors, we are leaving ldap backups in $vroot$tmp instead of $vroot$dest"
 else
    if [ -d $vroot$dest -a -d $vroot$tmp ]; then
       rm -rf $vroot$dest

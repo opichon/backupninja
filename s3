@@ -1,9 +1,3 @@
-# -*- mode: sh; sh-basic-offset: 3; indent-tabs-mode: nil; -*-
-# vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
-#
-# this handler will backup subversion repostitories.
-#
-
 getconf src
 getconf bucket
 getconf S3CMD "/usr/bin/s3cmd"
