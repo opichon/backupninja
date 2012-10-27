@@ -2,7 +2,7 @@ getconf dest /var/backups/ldap
 getconf tmp /var/backups/ldap.tmp
 getconf compress yes
 getconf SLAPCAT /usr/sbin/slapcat
-getconf options -f /etc/ldap/slapd.conf 
+getconf options "-f /etc/ldap/slapd.conf" 
 getconf suffixes
 
 error=0
