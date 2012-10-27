@@ -1,4 +1,3 @@
-getconf src /var/lib/ldap
 getconf dest /var/backups/ldap
 getconf tmp /var/backups/ldap.tmp
 getconf compress yes
