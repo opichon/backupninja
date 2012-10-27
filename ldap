@@ -32,6 +32,8 @@ cd $vroot$src
 
 for suffix in $suffixes
 do
+
+   echo $suffix
    ret=`mkdir -p $vroot$tmp/$suffix 2>&1`
    code=$?
    if [ "$ret" ]; then
@@ -45,6 +47,7 @@ do
    then
       ret=`$VSERVER $vsname exec $SLAPCAT $options -b $suffix | bzip2 > $tmp/$suffix/$suffix-$now.ldif.bz2  2>&1`
    else
+      echo "$SLAPCAT $options -b $suffix |bzip2 > $tmp/$suffix/$suffix-$now.ldif.bz2"
       ret=`$SLAPCAT $options -b $suffix | bzip2 > $tmp/$suffix/$suffix-$now.ldif.bz2 2>&1`
    fi
    code=$?
