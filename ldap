@@ -35,6 +35,8 @@ if [ $databases = all ]; then
    databases=$(find . -mindepth 1 -maxdepth 1 -type d)
 fi
 
+echo $databases
+
 for db in $databases
 do
    ret=`mkdir -p $vroot$tmp/$db 2>&1`
