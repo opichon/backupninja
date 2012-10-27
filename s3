@@ -1,0 +1,22 @@
+# -*- mode: sh; sh-basic-offset: 3; indent-tabs-mode: nil; -*-
+# vim: set filetype=sh sw=3 sts=3 expandtab autoindent:
+#
+# this handler will backup subversion repostitories.
+#
+
+getconf src
+getconf bucket
+getconf S3CMD "/usr/bin/s3cmd"
+getconf options "--recursive"
+error=0
+
+ret=`$S3CMD put $options $src s3://$bucket 2>&1`
+ code=$?
+   if [ "$ret" ]; then
+      debug "$ret"
+   fi
+   if [ $code != 0 ]; then
+      error "command failed $S3CMD put $options $src s3://$bucket"
+   fi
+exit 0
+
