@@ -1,9 +1,8 @@
-getconf src = /var/lib/ldap
-getconf dest = /var/backups/ldap
-getconf conf = /etc/ldap/slapd.conf
-getconf databases = all
-getconf compress = yes
-getconf SLAPCAT = /usr/bin/slapcat
+getconf src /var/lib/ldap
+getconf dest /var/backups/ldap
+getconf compress yes
+getconf SLAPCAT /usr/bin/slapcat
+getconf options -f /etc/ldap/slapd.conf 
 
 error=0
 now="$(date +"%Y%m%d")"
@@ -31,35 +30,29 @@ fi
 
 cd $vroot$src
 
-if [ $databases = all ]; then
-   databases=$(find . -mindepth 1 -maxdepth 1 -type d)
-fi
-
-echo $databases
-
-for db in $databases
+for suffix in $suffixes
 do
-   ret=`mkdir -p $vroot$tmp/$db 2>&1`
+   ret=`mkdir -p $vroot$tmp/$suffix 2>&1`
    code=$?
    if [ "$ret" ]; then
       debug "$ret"
    fi
    if [ $code != 0 ]; then
-      error "command failed mkdir -p $vroot$tmp/$db"
+      error "command failed mkdir -p $vroot$tmp/$suffix"
    fi
 
    if [ $usevserver = yes ]
    then
-      ret=`$VSERVER $vsname exec $SLAPCAT $src/$db | bzip2 > $tmp/$db/$db-$now.ldif.bz2  2>&1`
+      ret=`$VSERVER $vsname exec $SLAPCAT $options -b $suffix | bzip2 > $tmp/$suffix/$suffix-$now.ldif.bz2  2>&1`
    else
-      ret=`$SLAPCAT $src/$db | bzip2 > $tmp/$db/$db-$now.ldif.bz2 2>&1`
+      ret=`$SLAPCAT $options -b $suffix | bzip2 > $tmp/$suffix/$suffix-$now.ldif.bz2 2>&1`
    fi
    code=$?
    if [ "$ret" ]; then
       debug "$ret"
    fi
    if [ $code != 0 ]; then
-      error "command failed -- $SVNDUMP $vroot$src/$db > $vroot$tmp/$db/$db-$now.ldif.bz2"
+      error "command failed -- $SLAPCAT $options -b $suffix > $vroot$tmp/$suffix/$suffix-$now.ldif.bz2"
       error=1
    fi
 done
