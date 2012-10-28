@@ -1,7 +1,7 @@
 getconf src /var/lib/backups/
 getconf bucket
 getconf S3CMD "/usr/bin/s3cmd"
-getconf options "--recursive"
+getconf options "--recursive --rr"
 error=0
 
 ret=`$S3CMD put $options $src s3://$bucket 2>&1`
